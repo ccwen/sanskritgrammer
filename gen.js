@@ -16,19 +16,25 @@ var fs=require("fs");
 var processFile=function(fn,idx) {
 	var content=fs.readFileSync(rawpath+fn+".html","utf8");
 	var lastidx=0;
-	var lastkey="_";
+	var lastkey=0,key=0;
 	var start=rulestarts[idx];
 	var end=rulestarts[idx+1];
 
 	content.replace(/<p>(\d+)\. /g,function(m,m1,idx){
 		chunk=content.substring(lastidx,idx);
-		console.log("output",lastkey);
-		fs.writeFileSync(targetpath+lastkey+".html",chunk,"utf8");
-		lastidx=idx;
-		lastkey=m1;
+		key=parseInt(m1);
+		//console.log("output",lastkey);
+
+		//fs.writeFileSync(targetpath+lastkey+".html",chunk,"utf8");
+		if (lastkey && lastkey+1!=key && key>10) {
+			console.log("problem key",lastkey,m1);
+		} else {
+			lastidx=idx;
+		}
+		lastkey=key;
 	});
-	console.log("output",lastkey);
-	fs.writeFileSync(targetpath+lastkey+".html",chunk,"utf8");
+	//console.log("output",lastkey);
+	//fs.writeFileSync(targetpath+lastkey+".html",chunk,"utf8");
 }
 
 pages.map(processFile);
